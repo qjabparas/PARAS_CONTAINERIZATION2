@@ -1,0 +1,11 @@
+- name: Install LAMP stack in containerization form 
+  hosts: all
+  tags: LAMP
+  tasks:
+    - name: Global variables
+      include_vars:
+        file: config.yml
+
+    - name: Build and Run LAMP STACK
+      include_role:
+        name: LAMP

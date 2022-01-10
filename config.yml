@@ -1,0 +1,18 @@
+docker_repo: docker-ce.repo
+
+# Docker User
+docker_user: qjabparas
+
+# Web Server
+web_docker_img_n: web
+web_docker_img_tag: latest
+web_container_n: webserver
+web_ports: 8080:8080
+web_dockerfile_path: docker/web/
+
+# DB Server
+db_docker_img_n: db
+db_docker_img_tag: latest
+db_container_n: dbserver
+db_ports: 3306:3306
+db_dockerfile_path: docker/db/

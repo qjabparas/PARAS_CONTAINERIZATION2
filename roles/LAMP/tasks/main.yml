@@ -1,0 +1,49 @@
+---
+# tasks file for LAMP
+
+- name: Create Docker Directory 
+  file:
+    path: docker
+    state: directory
+
+- name: Copying docker dir files 
+  copy:
+    src: docker/
+    dest: docker/
+
+- name: Building web server using Docker image
+  docker_image:
+    name: "{{ web_docker_img_n }}"
+    build:
+      path: "{{ web_dockerfile_path }}"
+      pull: no
+    state: present
+    source: build
+  register: web_docker_img
+
+- name: Building DB server Docker image from Dockerfile
+  docker_image:
+    name: "{{ db_docker_img_n }}"
+    build:
+      path: "{{ db_dockerfile_path }}"
+      pull: no
+    state: present
+    source: build
+  register: db_docker_img
+
+- name: Clearing iptables routing filter
+  shell: iptables -F; iptables -X
+  when: web_docker_img.changed or db_docker_img.changed
+
+- name: Run Web server container
+  docker_container:
+    name: "{{ web_container_n }}"
+    image: "{{ web_docker_img_n }}:{{ web_docker_img_tag }}"
+    state: started
+    ports: "{{ web_ports }}"
+
+- name: Run Database server container
+  docker_container:
+    name: "{{ db_container_n }}"
+    image: "{{ db_docker_img_n }}:{{ db_docker_img_tag }}"
+    published_ports: "{{ db_ports }}"
